@@ -2,7 +2,7 @@ import sys
 from scanner import Scanner
 from error_handler import ErrorHandler
 
-class Lox:
+class Guava:
     def run(self, source):
         ErrorHandler.had_error = False
         for token in Scanner(source).scan_tokens():
@@ -24,12 +24,12 @@ class Lox:
 
 def main(): 
     num_arguments = len(sys.argv)
-    lox = Lox()
+    guava = Guava()
     if num_arguments > 2:
         print("To use the interpreter, type: python src/lox.py [script]")
         print("Or just simply: python lox.py")
         return 64
-    return lox.run_file(sys.argv[1]) if num_arguments == 2 else lox.run_prompt()
+    return guava.run_file(sys.argv[1]) if num_arguments == 2 else guava.run_prompt()
 
 if __name__ == "__main__":
     sys.exit(main())

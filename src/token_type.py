@@ -12,12 +12,13 @@ TokenType = Enum(
         'EQUAL', 'EQUAL_EQUAL',
         'GREATER', 'GREATER_EQUAL',
         'LESS', 'LESS_EQUAL',
+        'PLUS_PLUS', 'MINUS_MINUS',
 
         ## Literals
         'IDENTIFIER', 'STRING', 'NUMBER',
 
         ## Keywords
-        'AND', 'CLASS', 'ELSE', 'FALSE', 'FUN', 'FOR', 'IF', 'NIL', 'OR',
+        'AND', 'CLASS', 'ELSE', 'FALSE', 'FUN', 'FOR', 'IF', 'NULL', 'OR',
         'PRINT', 'RETURN', 'SUPER', 'THIS', 'TRUE', 'VAR', 'WHILE',
 
         'EOF'
