@@ -1,8 +1,6 @@
 from error_handler import ErrorHandler
 from lox_token import Token
 from token_type import TokenType
-from lox import Lox
-from numbers import Number
 
 
 class Scanner:
@@ -21,12 +19,14 @@ class Scanner:
         "false": TokenType.FALSE,
         "for": TokenType.FOR,
         "fun": TokenType.FUN,
-        "null": TokenType.NULL,
+        "if": TokenType.IF,
+        "nil": TokenType.NIL,
         "or": TokenType.OR,
         "print": TokenType.PRINT,
         "return": TokenType.RETURN,
         "super": TokenType.SUPER,
-        "this": TokenType.TRUE,
+        "this": TokenType.THIS,
+        "true": TokenType.TRUE,
         "var": TokenType.VAR,
         "while": TokenType.WHILE
     }
@@ -39,9 +39,9 @@ class Scanner:
         """
         while not self.is_at_end():
             self.start = self.current
-            self.scan_tokens(self)
+            self.scan_token()
 
-        self.tokens.append(Token(EOF, "", None, line))
+        self.tokens.append(Token(TokenType.EOF, "", None, self.line))
         return self.tokens
     
     def is_at_end(self):
@@ -52,16 +52,16 @@ class Scanner:
         match c:
             ## Single Characters
             ##---start AI code---
-            case '(': self.add_token(LEFT_PAREN)
-            case ')': self.add_token(RIGHT_PAREN)
-            case '{': self.add_token(LEFT_BRACE)
-            case '}': self.add_token(RIGHT_BRACE)
-            case ',': self.add_token(COMMA)
-            case '.': self.add_token(DOT)
-            case '-': self.add_token(MINUS)
-            case '+': self.add_token(PLUS)
-            case ';': self.add_token(SEMICOLON)
-            case '*': self.add_token(STAR)
+            case '(': self.add_token(TokenType.LEFT_PAREN)
+            case ')': self.add_token(TokenType.RIGHT_PAREN)
+            case '{': self.add_token(TokenType.LEFT_BRACE)
+            case '}': self.add_token(TokenType.RIGHT_BRACE)
+            case ',': self.add_token(TokenType.COMMA)
+            case '.': self.add_token(TokenType.DOT)
+            case '-': self.add_token(TokenType.MINUS)
+            case '+': self.add_token(TokenType.PLUS)
+            case ';': self.add_token(TokenType.SEMICOLON)
+            case '*': self.add_token(TokenType.STAR)
             ##--end AI code---
 
             ## Operators
@@ -75,12 +75,12 @@ class Scanner:
             ## Longer Lexemes (like division)
             ##---start AI code---
             case '/':
-                if self._match('/'):
+                if self.match('/'):
             # A comment goes until the end of the line.
-                    while self.peek() != '\n' and not self._is_at_end():
+                    while self.peek() != '\n' and not self.is_at_end():
                         self.advance()
                 else:
-                    self._add_token(TokenType.SLASH)
+                    self.add_token(TokenType.SLASH)
             ##--end AI code---
 
             ## Meaningless lexemes
@@ -103,21 +103,19 @@ class Scanner:
             case _: 
                 if self.is_digit(c):
                     self.number()
-                elif self.is_alpha(C):
+                elif self.is_alpha(c):
                     self.identifier()
                 else:
-                    Lox.error(self.line, "Unexpectected character.")
+                    ErrorHandler.error(self.line, "Unexpectected character.")
     
     def advance(self):
+        c = self.source[self.current]
         self.current += 1
-        return self.soruce[self.current]
-    
-    def add_token(self, type):
-        self.add_token(type, None)
+        return c
 
-    def addToken(self, type, literal):
+    def add_token(self, type, literal=None):
         text = self.source[self.start:self.current]
-        self.tokens.append(Token(type, text, literal, line))
+        self.tokens.append(Token(type, text, literal, self.line))
 
     def match(self, expected):
         if self.is_at_end():
@@ -136,13 +134,13 @@ class Scanner:
         return self.source[self.current]
     
     def string(self):
-        while self.peek() != '"' and self.is_at_end() != False:
+        while self.peek() != '"' and not self.is_at_end():
             if self.peek() == '\n':
                 self.line += 1
             self.advance()
 
         if self.is_at_end():
-            Lox.error(self.line, "Unterminated string.")
+            ErrorHandler.error(self.line, "Unterminated string.")
             return
         
         ## The closing "
@@ -152,7 +150,7 @@ class Scanner:
         starting_quote = self.start + 1
         ending_quote = self.current - 1
         value = self.source[starting_quote:ending_quote]
-        self.add_token(str, value)
+        self.add_token(TokenType.STRING, value)
 
     def is_digit(self, c):
         return c >= '0' and c <= '9'
@@ -169,7 +167,7 @@ class Scanner:
             while self.is_digit(self.peek()):
                 self.advance()
 
-        self.add_token(Number, float(self.source[self.start:self.current]))
+        self.add_token(TokenType.NUMBER, float(self.source[self.start:self.current]))
 
     def peek_next(self):
         peek_current = self.current + 1
@@ -181,7 +179,11 @@ class Scanner:
         while self.is_alpha_numeric(self.peek()):
             self.advance()
 
-            self.add_token(IDENTIFIER)
+        text = self.source[self.start:self.current]
+        type = self.keywords.get(text)
+        if type == None:
+            type = TokenType.IDENTIFIER
+        self.add_token(type)
 
     def is_alpha(self, c):
         return ('a' <= c <= 'z') or ('A' <= c <= 'Z') or (c == '_')

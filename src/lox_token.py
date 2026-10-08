@@ -11,5 +11,7 @@ class Token:
 
     def __str__(self):
         # TODO: return a string containing the type, lexeme, and literal.
-        return type + " " + lexeme + " " + literal
+        ## ---start AI code---
+        return f"{self.type} {self.lexeme} {self.literal}"
+        ## ---end AI code---
     

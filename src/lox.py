@@ -1,21 +1,37 @@
 import sys
-class Lox:
-    
+from scanner import Scanner
+from error_handler import ErrorHandler
 
-    def main(): 
-        num_arguments = len(sys.argv)
-        if num_arguments > 2:
-            print("To use the interpreter, type: python src/lox.py [script]")
-            print("Or just simply: python lox.py")
-            return 64
-        elif num_arguments == 2:
-            
-        if num_arguments == 1:
+class Lox:
+    def run(self, source):
+        ErrorHandler.had_error = False
+        for token in Scanner(source).scan_tokens():
+            print(token)
+
+    def run_file(self, path):
+        with open(path, encoding="utf-8") as source_file:
+            self.run(source_file.read())
+            return 65 if ErrorHandler.had_error else 0
+    
+    def run_prompt(self):
+        while True:
             try:
-                while True:
-                    REPL_mode = input()
-                    print("Scanner Not Implemented")
-            except KeyboardInterrupt:
-                print("Exiting REPL mode")
+                source = input("> ")
+            except (KeyboardInterrupt, EOFError):
+                print()
+                return 0
+            self.run(source)
+
+def main(): 
+    num_arguments = len(sys.argv)
+    lox = Lox()
+    if num_arguments > 2:
+        print("To use the interpreter, type: python src/lox.py [script]")
+        print("Or just simply: python lox.py")
+        return 64
+    return lox.run_file(sys.argv[1]) if num_arguments == 2 else lox.run_prompt()
+
+if __name__ == "__main__":
+    sys.exit(main())
 
 
