@@ -1,5 +1,5 @@
 from error_handler import ErrorHandler
-from lox_token import Token
+from guava_token import Token
 from token_type import TokenType
 
 
@@ -20,7 +20,7 @@ class Scanner:
         "for": TokenType.FOR,
         "fun": TokenType.FUN,
         "if": TokenType.IF,
-        "nil": TokenType.NIL,
+        "null": TokenType.NULL,
         "or": TokenType.OR,
         "print": TokenType.PRINT,
         "return": TokenType.RETURN,
@@ -58,8 +58,6 @@ class Scanner:
             case '}': self.add_token(TokenType.RIGHT_BRACE)
             case ',': self.add_token(TokenType.COMMA)
             case '.': self.add_token(TokenType.DOT)
-            case '-': self.add_token(TokenType.MINUS)
-            case '+': self.add_token(TokenType.PLUS)
             case ';': self.add_token(TokenType.SEMICOLON)
             case '*': self.add_token(TokenType.STAR)
             ##--end AI code---
@@ -74,6 +72,8 @@ class Scanner:
 
             ## Longer Lexemes (like division)
             ##---start AI code---
+            case '-': self.add_token(TokenType.MINUS_MINUS if self.match('-') else TokenType.MINUS)
+            case '+': self.add_token(TokenType.PLUS_PLUS if self.match('+') else TokenType.PLUS)
             case '/':
                 if self.match('/'):
             # A comment goes until the end of the line.

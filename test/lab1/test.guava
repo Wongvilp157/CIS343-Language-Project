@@ -1,0 +1,41 @@
+class GuavaTest() {
+// Test Comment
+var greeting = "hello";
+print(greeting);
+
+if(greeting == "hello") {
+return true;
+}
+else {
+return false;
+}
+
+for(i in elements) {
+fun greeting;
+}
+
+super.someClass
+
+while(i < 5) {
+doSomething(a,b,c);
+i++
+1+1
+}
+
+var math = 1*1;
+
+if(greeting != "hello) {
+print(sad);
+}
+
+var i = 1;
+i--;
+print(i);
+
+if(1 <= i <= 2 or i >= 1) {
+idk()
+}
+
+}
+
+
