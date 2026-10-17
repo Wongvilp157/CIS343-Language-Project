@@ -25,6 +25,15 @@ class Visitor(ABC, Generic[R]):
     def visit_unary_expr(self, expr: 'Unary') -> R:
         pass
 
+    @abstractmethod
+    def visit_logical_expr(self, expr: 'Logical') -> R:
+        pass
+
+    @abstractmethod
+    def visit_postfix_expr(self, expr: 'Postfix') -> R:
+        pass
+
+## Expr is the class Node
 class Expr(ABC):
     @abstractmethod
     def accept(self, visitor: 'Visitor[R]') -> R:
@@ -60,4 +69,21 @@ class Unary(Expr):
 
     def accept(self, visitor: 'Visitor[R]') -> R:
         return visitor.visit_unary_expr(self)
+
+@dataclass(frozen=True)
+class Logical(Expr):
+    left: 'Expr'
+    operator: 'Token'
+    right: 'Expr'
+
+    def accept(self, visitor: 'Visitor[R]') -> R:
+        return visitor.visit_logical_expr(self)
+
+@dataclass(frozen=True)
+class Postfix(Expr):
+    operand: 'Expr'
+    operator: 'Token'
+
+    def accept(self, visitor: 'Visitor[R]') -> R:
+        return visitor.visit_postfix_expr(self)
 

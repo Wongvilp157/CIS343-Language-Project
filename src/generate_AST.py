@@ -17,9 +17,11 @@ def main():
         "Binary   : Expr left, Token operator, Expr right",
         "Grouping : Expr expression",
         "Literal  : Object value",
-        "Unary    : Token operator, Expr right"
-    ##---end AI code---
+        "Unary    : Token operator, Expr right",
+        "Logical  : Expr left, Token operator, Expr right", # Needed for interpreter later
+        "Postfix  : Expr operand, Token operator"
     ])
+    ##---end AI code---
 
 ##---start AI code---
 def define_ast(output_dir: str, base_name: str, types: list[str]):

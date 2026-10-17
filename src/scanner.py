@@ -13,20 +13,18 @@ class Scanner:
         self.line = 1
 
     keywords = {
-        "and": TokenType.AND,
         "class": TokenType.CLASS,
         "else": TokenType.ELSE,
-        "false": TokenType.FALSE,
+        "False": TokenType.FALSE,
         "for": TokenType.FOR,
         "fun": TokenType.FUN,
         "if": TokenType.IF,
         "null": TokenType.NULL,
-        "or": TokenType.OR,
         "print": TokenType.PRINT,
         "return": TokenType.RETURN,
         "super": TokenType.SUPER,
         "this": TokenType.THIS,
-        "true": TokenType.TRUE,
+        "True": TokenType.TRUE,
         "var": TokenType.VAR,
         "while": TokenType.WHILE
     }
@@ -68,6 +66,16 @@ class Scanner:
             case '=': self.add_token(TokenType.EQUAL_EQUAL if self.match('=') else TokenType.EQUAL)
             case '<': self.add_token(TokenType.LESS_EQUAL if self.match('=') else TokenType.LESS)
             case '>': self.add_token(TokenType.GREATER_EQUAL if self.match('=') else TokenType.GREATER)
+            case '&':
+                if self.match('&'):
+                    self.add_token(TokenType.AND)
+                else:
+                    ErrorHandler.error(self.line, "Unexpected character.")
+            case '|':
+                if self.match('|'):
+                    self.add_token(TokenType.OR)
+                else:
+                    ErrorHandler.error(self.line, "Unexpected character.")
             ##--end AI code---
 
             ## Longer Lexemes (like division)
