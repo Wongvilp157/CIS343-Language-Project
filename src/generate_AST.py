@@ -34,12 +34,15 @@ def define_ast(output_dir: str, base_name: str, types: list[str]):
         writer.write("from dataclasses import dataclass\n")
         writer.write("from guava_token import Token\n")  
         writer.write("from typing import Any\n\n") # Required for 'Object value' mapping
+
+        define_visitor(writer, base_name, types)
         
         # Define the main abstract base class
         writer.write(f"class {base_name}(ABC):\n")
+        writer.write("    @abstractmethod\n")
+        writer.write("    def accept(self, visitor: 'Visitor[R]') -> R:\n")
+        writer.write("        pass\n\n")
 ##---end AI code---
-
-        define_visitor(writer, base_name, types)
     
         for type in types:
             type_parts = type.split(":")
@@ -47,16 +50,9 @@ def define_ast(output_dir: str, base_name: str, types: list[str]):
             fields = type_parts[1].strip()
             define_type(writer, base_name, class_name, fields)
 
-        ##---start AI code---
-        writer.write("\n")
-        writer.write("    @abstractmethod\n")
-        writer.write("    def accept(self, visitor: 'Visitor[R]') -> R:\n")
-        writer.write("        pass\n\n")
-        ##---end AI code---
-
 def define_type(writer, base_name, class_name, fields):
-    writer.write("  @dataclass(frozen=True)\n")
-    writer.write(f"  class {class_name}({base_name}):\n")
+    writer.write("@dataclass(frozen=True)\n")
+    writer.write(f"class {class_name}({base_name}):\n")
 
     fields = fields.split(", ")
     for field in fields:
